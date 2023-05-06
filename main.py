@@ -3,6 +3,8 @@ from selenium.webdriver.common.by import By
 import bs4
 # import pandas as pd
 import csv
+from selenium.webdriver import FirefoxOptions
+
 
 
 # driver = webdriver.Chrome(
@@ -10,9 +12,18 @@ import csv
 
 options = webdriver.ChromeOptions()
 options.add_experimental_option("detach", True)
-# driver = webdriver.Chrome()
 driver = webdriver.Chrome(
     options=options, executable_path="path/to/executable")
+
+# options = FirefoxOptions()
+# options.add_argument("--headless")
+# options.binary_location = r''
+# # browser = webdriver.Firefox(options=options)
+
+# driver = webdriver.Firefox(executable_path=r'/Users/tharintantayothin/Desktop/Nut/makeWebBkk/Shopee_repo/web-scraping-shopee/geckodriver.exe', options=options)
+
+
+
 
 driver.get('https://shopee.co.th/hairstylishs?fbclid=IwAR3m5WrV-KOiLqfWwUmwqikcFB-jCK_Hk6dCvIqKN0rVwSb-YlFsqqDAC7o#product_list')
 
@@ -62,3 +73,22 @@ with open('shopee.txt', 'w', encoding="utf-8") as f:
         f.write(product_name_list[i]+"," +
                 product_price_list[i]+","+product_sale_list[i])
         f.write('\n')
+
+import csv  
+
+header = ['name', 'price', 'sale']
+data_csv = []
+
+with open('shopee.csv', 'w', encoding='UTF8') as f:
+    writer = csv.writer(f)
+
+    # write the header
+    writer.writerow(header)
+
+    # write the data
+    for i in range(len(product_name_list)):
+        data_csv = []
+        data_csv.append(product_name_list[i])
+        data_csv.append(product_price_list[i])
+        data_csv.append(product_sale_list[i])
+        writer.writerow(data_csv)
