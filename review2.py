@@ -37,7 +37,7 @@ thai_button.click()
 next_btn = driver.find_element(
     By.XPATH, '/html/body/div[1]/div/div[2]/div/div/div[2]/div/div/div/div[2]/section[1]/div/div/div[2]/div[2]/button[8]')
 i = 1
-while i <= 10000:
+while i <= 10:
     next_btn.click()
     i += 1
 
