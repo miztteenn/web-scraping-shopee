@@ -4,6 +4,7 @@ import bs4
 # import pandas as pd
 import csv
 from selenium.webdriver import FirefoxOptions
+import time
 
 
 from selenium.common.exceptions import NoSuchElementException
@@ -54,17 +55,25 @@ thai_button = driver.find_element(
 
 
 thai_button.click()
+# ccc = driver.find_element(
+#     By.XPATH, "/html/body/div[1]/div/div[2]/div/div/div/div[2]/div/div[3]/div[2]/div[2]/div/div[3]/button[7]")
+# ccc.click()
+
+
 product_name_list = []
 product_price_list = []
 product_sale_list = []
 
-
+driverTemp = driver
 driver.execute_script("document.body.style.MozTransform='scale(0.1)';")
 driver.execute_script('document.body.style.MozTransformOrigin = "0 0";')
-driver.execute_script("document.body.style.zoom='10%'")
+driver.execute_script("document.body.style.zoom='50%'")
 data = driver.page_source  # ดึงข้อมูลจากหน้าเว็บ
 soup = bs4.BeautifulSoup(data)  # จัดในรูปแบบ BeautifulSoup
 
+total_pages_element = int(soup.find(
+    'span', {'class': 'shopee-mini-page-controller__total'}).text)
+print(total_pages_element)
 
 all_product = soup.find_all('div', {'class': 'VptMHK Odl6HA GO6iCi'})
 print(len(all_product))
@@ -91,43 +100,36 @@ for product in all_product_sale:
 # /html/body/div[1]/div/div[2]/div/div/div/div[2]/div/div[3]/div[2]/div[2]/div/div[3]/button[7]
 
 
-check_btn_next = True
-while check_btn_next:
-    try:
-        # driver.find_element(
-        # By.XPATH, "/html/body/div[1]/div/div[2]/div/div/div/div[2]/div/div[3]/div[2]/div[2]/div/div[3]/button[7]")
-        btn_next = driver.find_element(
-            By.XPATH, "/html/body/div[1]/div/div[2]/div/div/div/div[2]/div/div[3]/div[2]/div[2]/div/div[3]/button[7]")
-        print(btn_next)
-        btn_next.click()
-        driver.execute_script("document.body.style.MozTransform='scale(0.1)';")
-        driver.execute_script(
-            'document.body.style.MozTransformOrigin = "0 0";')
-        driver.execute_script("document.body.style.zoom='10%'")
-        data = driver.page_source  # ดึงข้อมูลจากหน้าเว็บ
-        soup = bs4.BeautifulSoup(data)  # จัดในรูปแบบ BeautifulSoup
+check_btn_next = 1
+while check_btn_next < total_pages_element:
+    page_url = f'https://shopee.co.th/nppbox?page={check_btn_next}'
+    driver.get(page_url)
+    time.sleep(5)
+    driver.execute_script("document.body.style.MozTransform='scale(0.1)';")
+    driver.execute_script('document.body.style.MozTransformOrigin = "0 0";')
+    driver.execute_script("document.body.style.zoom='50%'")
+    data = driver.page_source  # ดึงข้อมูลจากหน้าเว็บ
+    soup = bs4.BeautifulSoup(data)  # จัดในรูปแบบ BeautifulSoup
 
-        all_product = soup.find_all('div', {'class': 'VptMHK Odl6HA GO6iCi'})
-        print(len(all_product))
+    all_product = soup.find_all('div', {'class': 'VptMHK Odl6HA GO6iCi'})
+    all_product_price = soup.find_all('div', {'class': "uwSW-2 qljqDx"})
+    all_product_sale = soup.find_all('div', {'class': "ZjwhVB YpOBv3"})
 
-        for product in all_product:
-            # print(product.text)
-            product_name_list.append(product.text)
+    print(all_product_sale)
+    print(len(all_product_sale))
+    for x in range(len(all_product)):
+        if x > 5:
+            product_name_list.append(all_product[x].text)
 
-        all_product_price = soup.find_all('div', {'class': "uwSW-2 qljqDx"})
+    for x in range(len(all_product_price)):
+        if x > 5:
+            product_price_list.append(all_product_price[x].text)
+    for x in range(len(all_product_sale)):
+        if x > 5:
+            product_sale_list.append(all_product_sale[x].text)
 
-        for product in all_product_price:
-            # print(product.text)
-            product_price_list.append(product.text)
-
-        all_product_sale = soup.find_all('div', {'class': "ZjwhVB YpOBv3"})
-
-        for product in all_product_sale:
-            # print(product.text)
-            product_sale_list.append(product.text)
-    except NoSuchElementException:
-        print("errro")
-        check_btn_next = False
+    check_btn_next += 1
+    time.sleep(2)
 
 
 header = ['name', 'price', 'sale']
