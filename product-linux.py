@@ -236,4 +236,4 @@ def getData():
 
 
 if __name__ == "__main__":
-    app.run(debug=True, port=8001)
+    app.run(host="34.92.237.59", debug=True, port=5000)
