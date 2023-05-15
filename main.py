@@ -117,7 +117,7 @@ driver.execute_script('document.body.style.MozTransformOrigin = "0 0";')
 driver.execute_script("document.body.style.zoom='10%'")
 data = driver.page_source  # ดึงข้อมูลจากหน้าเว็บ
 soup = bs4.BeautifulSoup(data)  # จัดในรูปแบบ BeautifulSoup
-time.sleep(10)
+time.sleep(8)
 total_pages_element = int(soup.find(
     'span', {'class': 'shopee-mini-page-controller__total'}).text)
 print(total_pages_element)
@@ -159,7 +159,7 @@ while check_btn_next < total_pages_element:
     page_url = f'https://shopee.co.th/nppbox?page={check_btn_next}'
     print(f'https://shopee.co.th/nppbox?page={check_btn_next}')
     driver.get(page_url)
-    time.sleep(3)
+    time.sleep(5)
     try:
         myElem = WebDriverWait(driver, delay).until(
             EC.presence_of_element_located((By.ID, 'main')))
@@ -170,7 +170,7 @@ while check_btn_next < total_pages_element:
     driver.execute_script("document.body.style.MozTransform='scale(0.1)';")
     driver.execute_script('document.body.style.MozTransformOrigin = "0 0";')
     driver.execute_script("document.body.style.zoom='5%'")
-    time.sleep(3)
+    time.sleep(5)
     data = driver.page_source  # ดึงข้อมูลจากหน้าเว็บ
     soup = bs4.BeautifulSoup(data)  # จัดในรูปแบบ BeautifulSoup
 
