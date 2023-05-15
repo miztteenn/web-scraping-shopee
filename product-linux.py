@@ -88,7 +88,7 @@ def thai_number_to_int(value):
 
 
 @app.route("/", methods=["GET"])
-def getData():
+def home():
     return "Hello word"
 
 
