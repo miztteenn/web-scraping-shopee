@@ -87,6 +87,11 @@ def thai_number_to_int(value):
 #     executable_path=r'D:\Work Dev\makewebbkk\scraping shoppee\chromedriver_win32\chromedriver')
 
 
+@app.route("/", methods=["GET"])
+def getData():
+    return "Hello word"
+
+
 @app.route("/product", methods=["GET"])
 def getData():
     options = Options()
@@ -231,4 +236,4 @@ def getData():
 
 
 if __name__ == "__main__":
-    app.run()
+    app.run(debug=True, port=8001)
