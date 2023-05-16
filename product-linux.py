@@ -17,8 +17,11 @@ import time
 import io
 
 from flask import Flask, request, send_file, make_response, Response
+from flask_cors import CORS
+
 
 app = Flask(__name__)
+CORS(app)
 
 
 def thai_number_to_int(value):
@@ -236,4 +239,4 @@ def getData():
 
 
 if __name__ == "__main__":
-    app.run(host="34.92.237.59", debug=True, port=5000)
+    app.run(host="0.0.0.0", debug=True, port=5000)
