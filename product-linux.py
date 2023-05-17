@@ -97,6 +97,10 @@ def home():
 
 @app.route("/product", methods=["GET"])
 def getData():
+    link = request.args.get("link")
+    product = request.args.get("product")
+    price = request.args.get("price")
+    sale = request.args.get("sale")
     options = Options()
     options.add_argument("--headless")
     options.add_argument("--no-sandbox")
@@ -105,7 +109,7 @@ def getData():
         service=Service(ChromeDriverManager().install()), options=options
     )
 
-    driver.get("https://shopee.co.th/nppbox")
+    driver.get(link)
 
     delay = 3  # seconds
     try:
@@ -143,7 +147,7 @@ def getData():
         # options.add_experimental_option("detach", True)
         # driver = webdriver.Chrome(
         #     options=options, executable_path="path/to/executable")
-        page_url = f"https://shopee.co.th/nppbox?page={check_btn_next}"
+        page_url = f"{link}?page={check_btn_next}"
         print(f"https://shopee.co.th/nppbox?page={check_btn_next}")
         driver.get(page_url)
         time.sleep(5)
@@ -162,9 +166,9 @@ def getData():
         data = driver.page_source  # ดึงข้อมูลจากหน้าเว็บ
         soup = bs4.BeautifulSoup(data)  # จัดในรูปแบบ BeautifulSoup
 
-        all_product = soup.find_all("div", {"class": "Mz89A3 WZO+p+ uAxOVF"})
-        all_product_price = soup.find_all("div", {"class": "KF1Uvz _3QBW9H"})
-        all_product_sale = soup.find_all("div", {"class": "rOgDNT"})
+        all_product = soup.find_all("div", {"class": product})
+        all_product_price = soup.find_all("div", {"class": price})
+        all_product_sale = soup.find_all("div", {"class": sale})
 
         # print(all_product_sale)
         print(len(all_product))
