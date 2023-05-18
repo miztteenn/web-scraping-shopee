@@ -5,6 +5,7 @@ import bs4
 import csv
 from selenium.webdriver import FirefoxOptions
 import time
+import re
 
 
 from selenium.common.exceptions import NoSuchElementException
@@ -69,22 +70,13 @@ def thai_number_to_int(value):
         return 0
 
 
-# driver = webdriver.Chrome(
-#     executable_path=r'D:\Work Dev\makewebbkk\scraping shoppee\chromedriver_win32\chromedriver')
+
 
 
 options = webdriver.ChromeOptions()
 options.add_experimental_option("detach", True)
 driver = webdriver.Chrome(
     options=options, executable_path="path/to/executable")
-
-# options = FirefoxOptions()
-# options.add_argument("--headless")
-# options.binary_location = r''
-# # browser = webdriver.Firefox(options=options)
-
-# driver = webdriver.Firefox(executable_path=r'/Users/tharintantayothin/Desktop/Nut/makeWebBkk/Shopee_repo/web-scraping-shopee/geckodriver.exe', options=options)
-
 
 driver.get('https://shopee.co.th/nppbox')
 
@@ -107,7 +99,7 @@ thai_button.click()
 #     By.XPATH, "/html/body/div[1]/div/div[2]/div/div/div/div[2]/div/div[3]/div[2]/div[2]/div/div[3]/button[7]")
 # ccc.click()
 
-
+product_id_list = []
 product_name_list = []
 product_price_list = []
 product_sale_list = []
@@ -117,38 +109,10 @@ driver.execute_script('document.body.style.MozTransformOrigin = "0 0";')
 driver.execute_script("document.body.style.zoom='10%'")
 data = driver.page_source  # ดึงข้อมูลจากหน้าเว็บ
 soup = bs4.BeautifulSoup(data)  # จัดในรูปแบบ BeautifulSoup
-time.sleep(8)
+time.sleep(5)
 total_pages_element = int(soup.find(
     'span', {'class': 'shopee-mini-page-controller__total'}).text)
 print(total_pages_element)
-# all_product = soup.find_all('div', {'class': 'Mz89A3 WZO+p+ uAxOVF'})
-# all_product_price = soup.find_all('div', {'class': "KF1Uvz _3QBW9H"})
-# all_product_sale = soup.find_all('div', {'class': 'rOgDNT lNPX0P'})
-# print(len(all_product))
-# print(len(all_product_price))
-# print(len(all_product_sale))
-# all_product = soup.find_all('div', {'class': 'VptMHK Odl6HA GO6iCi'})
-# print(len(all_product))
-
-# for product in all_product:
-#     # print(product.text)
-#     product_name_list.append(product.text)
-
-# all_product_price = soup.find_all('div', {'class': "uwSW-2 qljqDx"})
-
-# for product in all_product_price:
-#     # print(product.text)
-#     product_price_list.append(product.text)
-
-
-# all_product_sale = soup.find_all('div', {'class': "ZjwhVB YpOBv3"})
-
-# for product in all_product_sale:
-#     # print(product.text)
-#     product_sale_list.append(product.text)
-
-# print(product_detail_list)
-# driver.close()
 
 check_btn_next = 0
 while check_btn_next < total_pages_element:
@@ -159,7 +123,7 @@ while check_btn_next < total_pages_element:
     page_url = f'https://shopee.co.th/nppbox?page={check_btn_next}'
     print(f'https://shopee.co.th/nppbox?page={check_btn_next}')
     driver.get(page_url)
-    time.sleep(5)
+    time.sleep(3)
     try:
         myElem = WebDriverWait(driver, delay).until(
             EC.presence_of_element_located((By.ID, 'main')))
@@ -167,10 +131,37 @@ while check_btn_next < total_pages_element:
     except TimeoutException:
         print("Loading took too much time!")
 
+
+    # Find Item_id the div elements and extract the href values
+    if check_btn_next < total_pages_element :
+        # print("if")
+        div_elements = driver.find_elements(By.CLASS_NAME ,"shop-search-result-view__item.col-xs-2-4")
+        for element in div_elements:
+            xxx = element.find_element(By.CSS_SELECTOR ,"a")
+            yyy = xxx.get_attribute('href')
+            r = re.search(r"i\.(\d+)\.(\d+)", yyy)
+            shop_id, item_id = r[1], r[2]
+            product_id_list.append(item_id)
+            # print(shop_id, item_id )
+        print(len(div_elements))
+
+    if check_btn_next == total_pages_element-1 :
+        # print("else")
+        div_elements = driver.find_elements(By.CLASS_NAME ,"shop-collection-view__item.col-xs-2-4")
+        for element in div_elements:
+            xxx = element.find_element(By.CSS_SELECTOR ,"a")
+            yyy = xxx.get_attribute('href')
+            r = re.search(r"i\.(\d+)\.(\d+)", yyy)
+            shop_id, item_id = r[1], r[2]
+            product_id_list.append(item_id)
+        print(len(div_elements))
+
+
+
     driver.execute_script("document.body.style.MozTransform='scale(0.1)';")
     driver.execute_script('document.body.style.MozTransformOrigin = "0 0";')
     driver.execute_script("document.body.style.zoom='5%'")
-    time.sleep(5)
+    time.sleep(3)
     data = driver.page_source  # ดึงข้อมูลจากหน้าเว็บ
     soup = bs4.BeautifulSoup(data)  # จัดในรูปแบบ BeautifulSoup
 
@@ -178,10 +169,10 @@ while check_btn_next < total_pages_element:
     all_product_price = soup.find_all('div', {'class': "KF1Uvz _3QBW9H"})
     all_product_sale = soup.find_all('div', {'class': 'rOgDNT'})
 
-    # print(all_product_sale)
-    print(len(all_product))
-    print(len(all_product_price))
-    print(len(all_product_sale))
+    # print(len(product_id_list))
+    # print(len(all_product))
+    # print(len(all_product_price))
+    # print(len(all_product_sale))
 
     for x in range(len(all_product)):
         if x > 5:
@@ -197,11 +188,11 @@ while check_btn_next < total_pages_element:
     check_btn_next += 1
 
 driver.close()
-
+print(len(product_id_list))
 print(len(product_name_list))
 print(len(product_price_list))
 print(len(product_sale_list))
-header = ['name', 'price', 'sale']
+header = ['product_id','name', 'price', 'sale']
 data_csv = []
 
 with open('shopee.csv', 'w', encoding='UTF8') as f:
@@ -213,6 +204,7 @@ with open('shopee.csv', 'w', encoding='UTF8') as f:
     # write the data
     for i in range(len(product_name_list)):
         data_csv = []
+        data_csv.append(product_id_list[i])
         data_csv.append(product_name_list[i])
         data_csv.append(product_price_list[i].replace("฿", ""))
         data_csv.append(thai_number_to_int((product_sale_list[i].replace(

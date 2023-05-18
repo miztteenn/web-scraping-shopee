@@ -15,6 +15,7 @@ import bs4
 import csv
 import time
 import io
+import re
 
 from flask import Flask, request, send_file, make_response, Response
 from flask_cors import CORS
@@ -126,6 +127,8 @@ def getData():
 
     thai_button.click()
 
+
+    product_id_list = []
     product_name_list = []
     product_price_list = []
     product_sale_list = []
@@ -135,7 +138,7 @@ def getData():
     driver.execute_script("document.body.style.zoom='10%'")
     data = driver.page_source  # ดึงข้อมูลจากหน้าเว็บ
     soup = bs4.BeautifulSoup(data)  # จัดในรูปแบบ BeautifulSoup
-    time.sleep(8)
+    time.sleep(6)
     total_pages_element = int(
         soup.find("span", {"class": "shopee-mini-page-controller__total"}).text
     )
@@ -158,6 +161,31 @@ def getData():
             print("Page is ready!")
         except TimeoutException:
             print("Loading took too much time!")
+
+
+        # Find Item_id the div elements and extract the href values
+        if check_btn_next < total_pages_element :
+            # print("if")
+            div_elements = driver.find_elements(By.CLASS_NAME ,"shop-search-result-view__item.col-xs-2-4")
+            for element in div_elements:
+                xxx = element.find_element(By.CSS_SELECTOR ,"a")
+                yyy = xxx.get_attribute('href')
+                r = re.search(r"i\.(\d+)\.(\d+)", yyy)
+                shop_id, item_id = r[1], r[2]
+                product_id_list.append(item_id)
+                # print(shop_id, item_id )
+            print(len(div_elements))
+
+        if check_btn_next == total_pages_element-1 :
+            # print("else")
+            div_elements = driver.find_elements(By.CLASS_NAME ,"shop-collection-view__item.col-xs-2-4")
+            for element in div_elements:
+                xxx = element.find_element(By.CSS_SELECTOR ,"a")
+                yyy = xxx.get_attribute('href')
+                r = re.search(r"i\.(\d+)\.(\d+)", yyy)
+                shop_id, item_id = r[1], r[2]
+                product_id_list.append(item_id)
+            print(len(div_elements))
 
         driver.execute_script("document.body.style.MozTransform='scale(0.1)';")
         driver.execute_script('document.body.style.MozTransformOrigin = "0 0";')
@@ -188,12 +216,12 @@ def getData():
 
         check_btn_next += 1
 
-    driver.close()
-
+    driver.quit()
+    print(len(product_id_list))
     print(len(product_name_list))
     print(len(product_price_list))
     print(len(product_sale_list))
-    header = ["name", "price", "sale"]
+    header = ["product_id","name", "price", "sale"]
     data_csv = []
 
     with open("shopee.csv", "w", encoding="UTF8") as f:
@@ -205,6 +233,7 @@ def getData():
         # write the data
         for i in range(len(product_name_list)):
             data_csv = []
+            data_csv.append(product_id_list[i])
             data_csv.append(product_name_list[i])
             data_csv.append(product_price_list[i].replace("฿", ""))
             data_csv.append(
