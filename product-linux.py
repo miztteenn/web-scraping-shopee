@@ -244,24 +244,26 @@ def getData():
             writer.writerow(data_csv)
 
     # return send_file('shopee.csv',mimetype='text/csv',as_attachment=True, ="data.csv")
-    output = io.StringIO()
-    writer2 = csv.writer(output)
-    line = ["name,price,sale"]
-    writer2.writerow(line)
+    # output = io.StringIO()
+    # writer2 = csv.writer(output)
+    # line = ["product_id","name,price,sale"]
+    # writer2.writerow(line)
 
-    for i in range(len(product_name_list)):
-        line = [
-            product_name_list[i]
-            + ","
-            + product_price_list[i].replace("฿", "")
-            + ","
-            + str(
-                thai_number_to_int(
-                    (product_sale_list[i].replace("ขายแล้ว ", "").replace(" ชิ้น", ""))
-                )
-            )
-        ]
-        writer2.writerow(line)
+    # for i in range(len(product_name_list)):
+    #     line = [
+    #         product_id_list[i] 
+    #         + ","
+    #         + product_name_list[i]
+    #         + ","
+    #         + product_price_list[i].replace("฿", "")
+    #         + ","
+    #         + str(
+    #             thai_number_to_int(
+    #                 (product_sale_list[i].replace("ขายแล้ว ", "").replace(" ชิ้น", ""))
+    #             )
+    #         )
+    #     ]
+    #     writer2.writerow(line)
 
     # return Response(
     #     output,
