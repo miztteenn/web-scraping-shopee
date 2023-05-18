@@ -175,7 +175,7 @@ def getData():
                 product_id_list.append(item_id)
                 # print(shop_id, item_id )
             print(len(div_elements))
-
+        time.sleep(2)
         if check_btn_next == total_pages_element-1 :
             # print("else")
             div_elements = driver.find_elements(By.CLASS_NAME ,"shop-collection-view__item.col-xs-2-4")
