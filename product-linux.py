@@ -224,52 +224,48 @@ def getData():
     header = ["product_id","name", "price", "sale"]
     data_csv = []
 
-    with open("shopee.csv", "w", encoding="UTF8") as f:
-        writer = csv.writer(f)
+    # with open("shopee.csv", "w", encoding="UTF8") as f:
+    #     writer = csv.writer(f)
 
-        # write the header
-        writer.writerow(header)
+    #     # write the header
+    #     writer.writerow(header)
 
-        # write the data
-        for i in range(len(product_name_list)):
-            data_csv = []
-            data_csv.append(product_id_list[i])
-            data_csv.append(product_name_list[i])
-            data_csv.append(product_price_list[i].replace("฿", ""))
-            data_csv.append(
-                thai_number_to_int(
-                    (product_sale_list[i].replace("ขายแล้ว ", "").replace(" ชิ้น", ""))
-                )
-            )
-            writer.writerow(data_csv)
-
-    # return send_file('shopee.csv',mimetype='text/csv',as_attachment=True, ="data.csv")
-    # output = io.StringIO()
-    # writer2 = csv.writer(output)
-    # line = ["product_id","name,price,sale"]
-    # writer2.writerow(line)
-
-    # for i in range(len(product_name_list)):
-    #     line = [
-    #         product_id_list[i] 
-    #         + ","
-    #         + product_name_list[i]
-    #         + ","
-    #         + product_price_list[i].replace("฿", "")
-    #         + ","
-    #         + str(
+    #     # write the data
+    #     for i in range(len(product_name_list)):
+    #         data_csv = []
+    #         data_csv.append(product_id_list[i])
+    #         data_csv.append(product_name_list[i])
+    #         data_csv.append(product_price_list[i].replace("฿", ""))
+    #         data_csv.append(
     #             thai_number_to_int(
     #                 (product_sale_list[i].replace("ขายแล้ว ", "").replace(" ชิ้น", ""))
     #             )
     #         )
-    #     ]
-    #     writer2.writerow(line)
+    #         writer.writerow(data_csv)
 
-    # return Response(
-    #     output,
-    #     mimetype="text/csv",
-    #     headers={"Content-Disposition": "attachment;filename=report.csv"},
-    # )
+    # return send_file('shopee.csv',mimetype='text/csv',as_attachment=True, ="data.csv")
+    output = io.StringIO()
+    writer2 = csv.writer(output)
+    line = ["product_id,name,price,sale"]
+    writer2.writerow(line)
+
+    for i in range(len(product_name_list)):
+        line = [
+            product_id_list[i] 
+            + ","
+            + product_name_list[i]
+            + ","
+            + product_price_list[i].replace("฿", "")
+            + ","
+            + str(
+                thai_number_to_int(
+                    (product_sale_list[i].replace("ขายแล้ว ", "").replace(" ชิ้น", ""))
+                )
+            )
+        ]
+        writer2.writerow(line)
+
+  
     return send_file("shopee.csv", as_attachment=True)
 
 

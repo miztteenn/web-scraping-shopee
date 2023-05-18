@@ -331,11 +331,15 @@
             success: function (csvData) {
               // Create a Blob object from the CSV data
               var blob = new Blob([csvData], { type: "text/csv" });
-
+              var d = new Date(),
+                dformat =
+                  [d.getMonth() + 1, d.getDate(), d.getFullYear()].join("-") +
+                  " " +
+                  [d.getHours(), d.getMinutes(), d.getSeconds()].join(":");
               // Create a dynamic link to download the CSV file
               var link = document.createElement("a");
               link.href = URL.createObjectURL(blob);
-              link.setAttribute("download", "data.csv");
+              link.setAttribute("download", dformat + ".csv");
               link.click();
               $("#modal-loading").modal("hide");
             },
